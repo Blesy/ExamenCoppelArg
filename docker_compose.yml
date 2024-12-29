@@ -2,7 +2,7 @@ version: "3.8"
 services:
   mysql-server:
     container_name: mysql-server
-    image: mysql_image
+    image: blesy/mysql_image:1.0
     restart: always
     ports:
       - "3307:3306"
@@ -16,7 +16,7 @@ services:
 
   mysql-connecter:
     container_name: mysql-connecter
-    image: mysql_image
+    image: blesy/mysql_image:1.0
     restart: on-failure
     healthcheck:
       test: curl --fail http://localhost:5000/ || exit 1
@@ -35,7 +35,7 @@ services:
 
   java-crud-app:
     container_name: spring-server
-    image: spring_image
+    image: blesy/spring_image:1.0
     restart: always
     environment:
       - DATABASE_URL=jdbc:mysql://mysql-server:3306/store?useSSL=false
@@ -47,6 +47,17 @@ services:
       - "8080:8080"
     networks:
       - networkCoppel
+    
+  angular-app:
+    container_name: angular-server
+    image: blesy/angular_image:1.0
+    restart: always
+    ports:
+      - "4200:4200"
+    networks:
+      - networkCoppel
+    depends_on:
+      - java-crud-app
 
 networks:
   networkCoppel:
