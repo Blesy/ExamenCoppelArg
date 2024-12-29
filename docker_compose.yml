@@ -1,0 +1,53 @@
+version: "3.8"
+services:
+  mysql-server:
+    container_name: mysql-server
+    image: mysql_image
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: store
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    networks:
+      - networkCoppel
+
+  mysql-connecter:
+    container_name: mysql-connecter
+    image: mysql_image
+    restart: on-failure
+    healthcheck:
+      test: curl --fail http://localhost:5000/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 8
+      start_period: 60s
+    ports:
+      - "3308:3306"
+    networks:
+      - networkCoppel
+    depends_on:
+      - mysql-server
+    command: >
+      sh -c "mysql --host=mysql-server --user=root --password=admin store"
+
+  java-crud-app:
+    container_name: spring-server
+    image: spring_image
+    restart: always
+    environment:
+      - DATABASE_URL=jdbc:mysql://mysql-server:3306/store?useSSL=false
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=admin
+    depends_on:
+      - mysql-connecter
+    ports:
+      - "8080:8080"
+    networks:
+      - networkCoppel
+
+networks:
+  networkCoppel:
+    driver: bridge

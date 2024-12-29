@@ -1,0 +1,20 @@
+<div class="alerta" *ngIf="inputVacio">Debe ingresar una tarea</div>
+
+<ul>
+  <li>
+    <div class="task-item">
+      <input type="text" [(ngModel)]="newTaskTitle" placeholder="Nueva tarea" />
+      <button (click)="addTask()">Agregar</button>
+    </div>
+  </li>
+</ul>
+
+<ul>
+    <li *ngFor="let tarea of tasks">
+      <app-task-item 
+        [task]="tarea" 
+        (taskDeleted)="deleteTask($event)">
+      </app-task-item>
+    </li>
+</ul>
+

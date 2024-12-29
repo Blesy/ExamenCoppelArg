@@ -1,0 +1,5 @@
+<div class="task-item">
+    <input type="checkbox" [checked]="task.completado" (change)="markAsCompleted()" />
+    <span [class.completed]="task.completado">{{ task.tarea }}</span>
+    <button (click)="deleteTask()">Borrar</button>
+</div>
